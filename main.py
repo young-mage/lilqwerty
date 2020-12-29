@@ -6,7 +6,7 @@ import time
 import numpy as np
 pg.init()
 
-WIN_WIDTH = 800
+WIN_WIDTH = 400
 WIN_HEIGHT = 200
 
 words_file = open("words_alpha.txt", "r")
@@ -18,13 +18,15 @@ pg.display.set_caption("lil qwerty")
 font = pg.font.SysFont("Arial", 100)
 annot_font = pg.font.SysFont("Arial", 20)
 
-wpm_render = annot_font.render("wpm:", True, (0, 0, 0))
-mstk_render = annot_font.render("mistakes:", True, (0, 0, 0))
-pg.display.set_icon(font.render('lqw', True, (100, 200, 100)))
+wpm_render = annot_font.render("wpm: 0", True, (0, 0, 0))
+mstk_render = annot_font.render("mistakes: 0", True, (0, 0, 0))
+wrds_render = annot_font.render("total: 0", True, (0, 0, 0))
+pg.display.set_icon(pg.image.load("icon.png"))
 
 word_timings = []
 wpm = 0
 mistakes = 0
+words_total = 0
 
 
 # init_char_renders: string -> list<Surface>
@@ -107,6 +109,9 @@ while run:
                 meta = init_string_data(random.choice(word_list))
                 wpm_render = annot_font.render("wpm: " + str(wpm), True,
                                                (0, 0, 0))
+                words_total += 1
+                wrds_render = annot_font.render("total: " + str(words_total),
+                                                True, (0, 0, 0))
                 current_time = time.time_ns()
             already_pressed[i] = True
 
@@ -132,7 +137,8 @@ while run:
     pg.draw.rect(window, (230, 230, 230), (0, 0, WIN_WIDTH, WIN_HEIGHT))
     render_word(WIN_WIDTH / 2 - meta.width / 2, 54, meta.char_screens)
     window.blit(wpm_render, (0, 0))
-    window.blit(mstk_render, (0, 22))
+    window.blit(mstk_render, (WIN_WIDTH / 2 - mstk_render.get_width() / 2, 0))
+    window.blit(wrds_render, (WIN_WIDTH - mstk_render.get_width(), 0))
     pg.display.update()
 
 pg.quit()
